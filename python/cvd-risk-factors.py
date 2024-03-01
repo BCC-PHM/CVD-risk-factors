@@ -124,7 +124,7 @@ fig.savefig("../output/alcohol/alcohol-IMD.png", bbox_inches = "tight", dpi = 30
 data["Increased/Higer\nrisk drinking"] = data["Increased/Higer risk drinking"]
 for gender in list(genders.keys()):
     data_i = data[data["Gender"] == gender]
-    title = "Increased/Higer\nrisk drinking"
+    title = "Increased/Higer\nrisk drinking" 
     
     count_pivot = Mat.get_pivot(
         data_i,
@@ -144,8 +144,69 @@ for gender in list(genders.keys()):
     fig = Mat.inequality_map(count_pivot, 
                        perc_pivot = perc_pivot, 
                        palette = genders[gender]["Palette"],
-                       title = title,
+                       title = title + "(" + gender + ")",
                        ttest = True)
     
     fig.savefig("../output/alcohol/alcohol-matrix-{}.png".format(gender.lower()),
                 bbox_inches = "tight", dpi = 300)
+    
+#%% Inactivity
+
+data["Broad_activity_term"] =  data["Broad_activity_term"].fillna("Unknown")
+data.value_counts("Broad_activity_term")
+print("Activity data missing for {:3.3}% of cases".format(100*10863/len(data)))
+
+# Filter out unknown cases
+data3 = data[data["Broad_activity_term"] != "Unknown"]
+data3["Inactive"] = data3["Broad_activity_term"] == "inactive"
+data3["Inactive %"] = 100*data3["Inactive"]
+
+# Factor by ethnicity
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data3, x="Ethnic Group", y = "Inactive %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees asked\nwho are physically inactive")
+plt.xlabel("")
+fig.savefig("../output/inactivity/inactivity-eth.png", bbox_inches = "tight", dpi = 300)
+
+# Factor by IMD
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data3, x="GP IMD Quintile", y = "Inactive %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees asked\nwho are physically inactive")
+plt.xlabel("")
+plt.xticks([0,1,2,3,4], 
+           ["1\n(Most deprived)", "2", "3","4", "5\n(Least deprived)"])
+fig.savefig("../output/inactivity/inactivity-IMD.png", bbox_inches = "tight", dpi = 300)
+
+
+# Factor inequality matrix
+data3["Physical Inactivity"] = data3["Inactive"]
+for gender in list(genders.keys()):
+    data_i = data3[data3["Gender"] == gender]
+    title = "Physical Inactivity"
+    
+    count_pivot = Mat.get_pivot(
+        data_i,
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="count"
+        )
+    
+    perc_pivot = Mat.get_pivot(
+        data_i,
+        column = title,
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="percentage"
+        )
+    
+    fig = Mat.inequality_map(count_pivot, 
+                       perc_pivot = perc_pivot, 
+                       palette = genders[gender]["Palette"],
+                       title = title + "(" + gender + ")",
+                       ttest = True)
+    
+    fig.savefig("../output/inactivity/inactivity-matrix-{}.png".format(gender.lower()),
+                bbox_inches = "tight", dpi = 300)
+    
