@@ -13,7 +13,7 @@ import EquiPy.Matrix as Mat
 custom_params = {"axes.spines.right": False, "axes.spines.top": False}
 sns.set_theme(style="ticks", rc=custom_params)
 
-palette = ["#ac491a", "#644c90"]
+palette = ["#c75d23", "#786ba3"]
 #%% Load and preprocess data
 file = r"\\svwvap1126.addm.ads.brm.pri\PHSensitive$\Intelligence New\Themes\Health Checks\Health Check Results\HC-processed-2018-2022.xlsx"
 data = pd.read_excel(file)
