@@ -210,3 +210,165 @@ for gender in list(genders.keys()):
     fig.savefig("../output/inactivity/inactivity-matrix-{}.png".format(gender.lower()),
                 bbox_inches = "tight", dpi = 300)
     
+#%% Smoking
+
+data["Current Smoker"] = data['Smoking_status'] == "Current smoker"
+data["Current Smoker %"] = 100*data["Current Smoker"]
+
+# Factor by ethnicity
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data, x="Ethnic Group", y = "Current Smoker %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees asked\nwho are current smokers")
+plt.xlabel("")
+fig.savefig("../output/smoking/smoking-eth.png", bbox_inches = "tight", dpi = 300)
+
+# Factor by IMD
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data, x="GP IMD Quintile", y = "Current Smoker %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees asked\nwho are current smokers")
+plt.xlabel("")
+plt.xticks([0,1,2,3,4], 
+           ["1\n(Most deprived)", "2", "3","4", "5\n(Least deprived)"])
+fig.savefig("../output/smoking/smoking-IMD.png", bbox_inches = "tight", dpi = 300)
+
+
+# Factor inequality matrix
+for gender in list(genders.keys()):
+    data_i = data[data["Gender"] == gender]
+    title = "Current Smoker"
+    
+    count_pivot = Mat.get_pivot(
+        data_i,
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="count"
+        )
+    
+    perc_pivot = Mat.get_pivot(
+        data_i,
+        column = title,
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="percentage"
+        )
+    
+    fig = Mat.inequality_map(count_pivot, 
+                       perc_pivot = perc_pivot, 
+                       palette = genders[gender]["Palette"],
+                       title = title + "(" + gender + ")",
+                       ttest = True)
+    
+    fig.savefig("../output/smoking/smoking-matrix-{}.png".format(gender.lower()),
+                bbox_inches = "tight", dpi = 300)
+    
+    
+#%% Hypertension
+data["Hypertension Status"] = data["Hypertension"] == "Hypertension"
+data["Hypertension %"] = 100*data["Hypertension Status"]
+
+# Factor by ethnicity
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data, x="Ethnic Group", y = "Hypertension %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees\nwho have hypertension")
+plt.xlabel("")
+plt.legend(loc = 2)
+fig.savefig("../output/hypertension/hypertension-eth.png", bbox_inches = "tight", dpi = 300)
+
+# Factor by IMD
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data, x="GP IMD Quintile", y = "Hypertension %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees\nwho have hypertension")
+plt.xlabel("")
+plt.legend(loc = 2)
+plt.xticks([0,1,2,3,4], 
+           ["1\n(Most deprived)", "2", "3","4", "5\n(Least deprived)"])
+fig.savefig("../output/hypertension/hypertension-IMD.png", bbox_inches = "tight", dpi = 300)
+
+
+# Factor inequality matrix
+for gender in list(genders.keys()):
+    data_i = data[data["Gender"] == gender]
+    title = "Hypertension"
+    
+    count_pivot = Mat.get_pivot(
+        data_i,
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="count"
+        )
+    
+    perc_pivot = Mat.get_pivot(
+        data_i,
+        column = "Hypertension Status",
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="percentage"
+        )
+    
+    fig = Mat.inequality_map(count_pivot, 
+                       perc_pivot = perc_pivot, 
+                       palette = genders[gender]["Palette"],
+                       title = title + "(" + gender + ")",
+                       ttest = True)
+    
+    fig.savefig("../output/hypertension/hypertension-matrix-{}.png".format(gender.lower()),
+                bbox_inches = "tight", dpi = 300)
+
+#%% High cholesterol
+    
+data["High Cholesterol"] = data["TC2HDL_cat"] == "High Risk"
+
+data["High Cholesterol %"] = 100 * data["High Cholesterol"] 
+
+# Factor by ethnicity
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data, x="Ethnic Group", y = "High Cholesterol %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees\nwho High Cholesterol")
+plt.xlabel("")
+plt.legend(loc = 2)
+fig.savefig("../output/cholesterol/cholesterol-eth.png", bbox_inches = "tight", dpi = 300)
+
+# Factor by IMD
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data, x="GP IMD Quintile", y = "High Cholesterol %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees\nwho have High Cholesterol")
+plt.xlabel("")
+plt.legend(loc = 2)
+plt.xticks([0,1,2,3,4], 
+           ["1\n(Most deprived)", "2", "3","4", "5\n(Least deprived)"])
+fig.savefig("../output/cholesterol/cholesterol-IMD.png", bbox_inches = "tight", dpi = 300)
+
+# Factor inequality matrix
+for gender in list(genders.keys()):
+    data_i = data[data["Gender"] == gender]
+    title = "High Cholesterol"
+    
+    count_pivot = Mat.get_pivot(
+        data_i,
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="count"
+        )
+    
+    perc_pivot = Mat.get_pivot(
+        data_i,
+        column = title,
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="percentage"
+        )
+    
+    fig = Mat.inequality_map(count_pivot, 
+                       perc_pivot = perc_pivot, 
+                       palette = genders[gender]["Palette"],
+                       title = title + "(" + gender + ")",
+                       ttest = True)
+    
+    fig.savefig("../output/cholesterol/cholesterol-matrix-{}.png".format(gender.lower()),
+                bbox_inches = "tight", dpi = 300)
