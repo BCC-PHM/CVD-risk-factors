@@ -13,7 +13,7 @@ import EquiPy.Matrix as Mat
 custom_params = {"axes.spines.right": False, "axes.spines.top": False}
 sns.set_theme(style="ticks", rc=custom_params)
 
-palette = ["#8172b3", "#dd8452"]
+palette = ["#ac491a", "#644c90"]
 #%% Load and preprocess data
 file = r"\\svwvap1126.addm.ads.brm.pri\PHSensitive$\Intelligence New\Themes\Health Checks\Health Check Results\HC-processed-2018-2022.xlsx"
 data = pd.read_excel(file)
@@ -95,4 +95,57 @@ for gender in list(genders.keys()):
                        ttest = True)
     
     fig.savefig("../output/obesity/obesity-matrix-{}.png".format(gender.lower()),
+                bbox_inches = "tight", dpi = 300)
+
+#%% Alcohol
+
+data["Increased/Higer risk drinking %"] = 100*data["Increased/Higer risk drinking"]
+
+# Factor by ethnicity
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data, x="Ethnic Group", y = "Increased/Higer risk drinking %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees with increased/higher\nrisk drinking levels")
+plt.xlabel("")
+fig.savefig("../output/alcohol/alcohol-eth.png", bbox_inches = "tight", dpi = 300)
+
+# Factor by IMD
+fig = plt.figure(figsize = (6,4))
+sns.barplot(data, x="GP IMD Quintile", y = "Increased/Higer risk drinking %", hue = "Gender",
+            palette = palette, hue_order = ["Female", "Male"])
+plt.ylabel("% of HC Attendees with increased/higher\nrisk drinking levels")
+plt.xlabel("")
+plt.xticks([0,1,2,3,4], 
+           ["1\n(Most deprived)", "2", "3","4", "5\n(Least deprived)"])
+fig.savefig("../output/alcohol/alcohol-IMD.png", bbox_inches = "tight", dpi = 300)
+
+
+# Factor inequality matrix
+data["Increased/Higer\nrisk drinking"] = data["Increased/Higer risk drinking"]
+for gender in list(genders.keys()):
+    data_i = data[data["Gender"] == gender]
+    title = "Increased/Higer\nrisk drinking"
+    
+    count_pivot = Mat.get_pivot(
+        data_i,
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="count"
+        )
+    
+    perc_pivot = Mat.get_pivot(
+        data_i,
+        column = title,
+        eth_col = "Ethnic Group", 
+        IMD_col = "GP IMD Quintile",
+        mode="percentage"
+        )
+    
+    fig = Mat.inequality_map(count_pivot, 
+                       perc_pivot = perc_pivot, 
+                       palette = genders[gender]["Palette"],
+                       title = title,
+                       ttest = True)
+    
+    fig.savefig("../output/alcohol/alcohol-matrix-{}.png".format(gender.lower()),
                 bbox_inches = "tight", dpi = 300)
